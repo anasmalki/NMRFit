@@ -1,0 +1,14 @@
+[project]
+name = "NMRFit"
+version = "0.4"
+authors = [
+  { name="Anas Malki", email="anas.malki@gmail.com" },
+]
+description = "A package to perform model-free analysis, rotational diffusion tensor fitting and spectral density mapping"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
