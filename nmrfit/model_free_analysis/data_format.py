@@ -64,6 +64,36 @@ def make_inputs(data, number):
                 ee.append([np.nan])
     yield np.array([np.concatenate(rr).ravel(), np.concatenate(ee).ravel()])
     
+def make_inputs_MC(extracted_rate, number):
+    rr = []
+    if number == 0:
+        for i in range(len(extracted_rate)):
+                rr.append(extracted_rate[i]["R1"])
+                rr.append(extracted_rate[i]["R2"])
+                if "NOE" in extracted_rate[i]:
+                    rr.append(extracted_rate[i]["NOE"])
+                else:
+                    rr.append([np.nan])
+                    ee.append([np.nan])
+                if "etaXY" in extracted_rate[i]:
+                    rr.append(extracted_rate[i]["etaXY"])
+                else:
+                    rr.append([np.nan])
+    if number != 0:
+        for i in range(len(extracted_rate)):
+            rr.append(extracted_rate[i][extracted_rate[i]["num"]==number]["R1"])
+            rr.append(extracted_rate[i][extracted_rate[i]["num"]==number]["R2"])
+            if "NOE" in extracted_rate[i]:
+                rr.append(extracted_rate[i][extracted_rate[i]["num"]==number]["NOE"])
+            else:
+                rr.append([np.nan])
+                ee.append([np.nan])
+            if "etaXY" in extracted_rate[i]:
+                rr.append(extracted_rate[i][extracted_rate[i]["num"]==number]["etaXY"])
+            else:
+                rr.append([np.nan])
+    yield np.array(np.concatenate(rr).ravel())
+
 def generate_MC(rates, error, nmc):
     rr = []
     for k in range(nmc):
@@ -236,6 +266,15 @@ def compile_results(nmodel, relax_data, fit_stat, fit_result, fields):
         df = df.merge(res_stat[0], on='num', how='left')
         return df
     
+def extract_rate_pred(compiled_results, fields):
+    pp = []
+    for i in fields:
+        pred =  compiled_results.filter(like=f'_{i}').copy()
+        pred.rename(columns=lambda x: x.replace(f'_pred_{i}', ''), inplace=True)
+        pred.insert(0, 'num', compiled_results['num'])
+        pp.append(pred)
+    return pp
+
 ### SDF functions
 
 
