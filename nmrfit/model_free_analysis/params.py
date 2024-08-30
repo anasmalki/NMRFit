@@ -42,7 +42,7 @@ def make_params(model, tslow, tfast, theta):
         params.add('theta', value=theta, vary=False)
     else:
         if theta=="Yes":
-            params.add('theta', value=22.5, min=21.8, max=23, vary=True)
+            params.add('theta', value=22.5, vary=True)
         else:
             params.add('theta', value=22.5, vary=False)
     
