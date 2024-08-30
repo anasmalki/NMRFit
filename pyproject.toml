@@ -1,6 +1,6 @@
 [project]
 name = "NMRFit"
-version = "0.4"
+version = "0.5"
 authors = [
   { name="Anas Malki", email="anas.malki@gmail.com" },
 ]
