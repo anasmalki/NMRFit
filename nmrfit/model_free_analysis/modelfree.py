@@ -2,7 +2,7 @@ import numpy as np
 from tqdm import tqdm
 import pybroom as br
 from .params import make_params, make_params_random
-from .data_format import make_inputs, generate_MC
+from .data_format import make_inputs, compile_results, extract_rate_pred, make_inputs_MC, generate_MC
 from .fit import fit_MF
 from .nmr import relax
 
@@ -58,11 +58,15 @@ def batch_fit(relaxation_input, fields, models, tslow, tfast, theta, method, nb_
             fit_result.append(br.tidy(m).set_index('name').T)
     return fit_stat, fit_result
 
-def fit_MC(relaxation_input, fields, models, tslow, tfast, theta, method, nb_iter, nb_MC):
+def fit_MC(relaxation_input, fields, compiled_results, models, tslow, tfast, theta, method, nb_iter, nb_MC): ### The MC normal distribution is generated around the predicted rates and not around the experimental rates, using the experimental error.
+    pred = extract_rate_pred(compiled_results, fields)
     fit_stat = []
     fit_result =[]
     for k in tqdm(relaxation_input[0]["num"]):
         a, b = np.array(list(make_inputs(relaxation_input, k))).reshape(len(fields),len(fields)*4)
+        a = np.array(list(make_inputs_MC(pred, k)))[0]
+        nan_positions = np.isnan(b)
+        a[nan_positions] = np.nan
         mc = generate_MC(a,b,nb_MC)
         bb =[]
         cc = []
